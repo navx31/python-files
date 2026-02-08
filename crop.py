@@ -1,43 +1,42 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt 
-import seaborn as sns
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
 
 df = pd.read_csv('crop_yield.csv')
 print(df.columns)
-numeric_columns=['Temperature (°C)', 'Rainfall (mm)', 'Humidity (%)', 'Yield (tons/hectare)']
-for col in numeric_columns:
-    plt.figure(figsize=(8,5))
-    sns.histplot(df[col], kde=True, bins=20)
-    plt.title(f'Distribution of {col}')
-    plt.xlabel(col)
-    plt.ylabel('Frequency')
-    plt.show()
+df_dup=df.copy()
 
-sns.countplot(x=df['Soil Type'])
-plt.show()
-sns.countplot(x=df['Crop Type'])
-plt.show()
-sns.countplot(x=df['Weather Condition'])
-plt.show()
+ss=StandardScaler()
+df_dup['Temperature'] = ss.fit_transform(df_dup[['Temperature (°C)']])
+df_dup['Rainfall'] = ss.fit_transform(df_dup[['Rainfall (mm)']])
+df_dup['Humidity'] = ss.fit_transform(df_dup[['Humidity (%)']])
+print(df_dup.head())
 
-for col in numeric_columns:
-    plt.figure(figsize=(6,4))
-    sns.boxplot(df[col], orient='h')
-    plt.title(f'Distribution of {col}')
-    plt.xlabel(col)
-    plt.ylabel('Frequency')
-    plt.show()
-   
-plt.figure(figsize=(8,6))
-sns.heatmap(df.corr(numeric_only=True), annot=True, cmap='coolwarm')
-plt.title('Correlation Matrix')
-plt.show()
+MM=MinMaxScaler()
+df_dup['Temperature'] = MM.fit_transform(df_dup[['Temperature (°C)']])
+df_dup['Rainfall'] = MM.fit_transform(df_dup[['Rainfall (mm)']])
+df_dup['Humidity'] = MM.fit_transform(df_dup[['Humidity (%)']])
+print(df_dup.head())
 
-"""df_cleared=df.copy()
-print(df_cleared['Soil Type'].value_counts())
-print(df_cleared['Crop Type'].value_counts())
-print(df_cleared['Weather Condition'].value_counts())
+on=OneHotEncoder()
+df_dup = pd.get_dummies(df_dup, columns=['Soil Type','Weather Condition','Crop Type'], dtype=int)
+print(df_dup.columns) 
 
-df_cleared=pd.get_dummies(df_cleared, columns=['Soil Type', 'Crop Type', 'Weather Condition'], drop_first=True)
-print(df_cleared.head())"""
+X = df_dup.drop('Yield (tons/hectare)', axis=1)
+y = df_dup['Yield (tons/hectare)']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+print("x train is :")
+print(X_train)
+print("x test is :")
+print(X_test)
+print("y train is :")
+print(y_train)
+print("y test is :")
+print(y_test)  
+

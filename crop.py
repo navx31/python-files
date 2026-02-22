@@ -6,6 +6,7 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score,mean_absolute_error,mean_squared_error
 
 
 df = pd.read_csv('crop_yield.csv')
@@ -31,12 +32,14 @@ print(df_dup.columns)
 X = df_dup.drop('Yield (tons/hectare)', axis=1)
 y = df_dup['Yield (tons/hectare)']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-print("x train is :")
-print(X_train)
-print("x test is :")
-print(X_test)
-print("y train is :")
-print(y_train)
-print("y test is :")
-print(y_test)  
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+model = LinearRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+print("\n Model Performance ")
+print(f"R² Score: {r2_score(y_test, y_pred):.4f}")
+print(f"Mean Absolute Error: {mean_absolute_error(y_test, y_pred):,.2f}")
+print(f"Root Mean Squared Error: ${np.sqrt(mean_squared_error(y_test, y_pred)):,.2f}")  
 

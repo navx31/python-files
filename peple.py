@@ -14,6 +14,10 @@ df_dup.drop(['Name','Age','City'],axis=1,inplace=True)
 X=df_dup[['performance_score']]
 y=df_dup[['Salary']]
 X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.2,random_state=42)
+ss=StandardScaler()
+X_train_scaled=ss.fit_transform(X_train)
+X_test_scaled=ss.transform(X_test)
+
 slr=LinearRegression()
 slr.fit(X,y)
 perfoemance_score= float(input("Enter the performance score: "))

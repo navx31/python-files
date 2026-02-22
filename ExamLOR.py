@@ -30,10 +30,10 @@ model=LogisticRegression()
 model.fit(X_train_scaled,y_train)
 y_pred=model.predict(X_test_scaled) 
 
-print("\n--- Model Performance ---")
+print("\n Model Performance ")
 print(f"Accuracy Score: {accuracy_score(y_test, y_pred):.4f}")
-print("\n--- Classification Report ---")
+print("\n Classification Report ")
 print(classification_report(y_test, y_pred))
-print("\n--- Confusion Matrix ---")
+print("\n Confusion Matrix ")
 print(confusion_matrix(y_test, y_pred))
 

@@ -50,30 +50,10 @@ facility_rating=float(input("Rate your study facility (1-5): "))
 exam_difficulty=float(input("Rate the exam difficulty (1-5): "))
 course=float(input("Choose your course (1 for Math, 0 for English): "))
 
-# build a raw single-row DataFrame from inputs (use numeric values for ordinal cats)
-user_raw = pd.DataFrame([{
-    'study_hours': study_hours,
-    'class_attendance': class_attendance,
-    'sleep_hours': sleep_hours,
-    'internet_access': int(internet_access),
-    'sleep_quality': int(sleep_quality),
-    'study_method': int(study_method),
-    'facility_rating': int(facility_rating),
-    'exam_difficulty': int(exam_difficulty),
-    'course': int(course),
-    # provide placeholders for columns not asked interactively
-    'age': 'unknown',
-    'gender': 'unknown'
-}])
-
-# one-hot encode the same categorical columns used during training
-cat_cols = ['age','gender','internet_access','study_method','sleep_quality','facility_rating','exam_difficulty','course']
-user_ohe = pd.get_dummies(user_raw, columns=cat_cols, dtype=int)
-
-# align to training features and fill missing dummy cols with 0
-user_ohe = user_ohe.reindex(columns=X.columns, fill_value=0)
-
-# scale and predict
-user_scaled = scaler.transform(user_ohe)
-predicted_score = model.predict(user_scaled)[0]
-print(f"The predicted exam score is: {predicted_score:.2f}")
+# combine raw inputs into one row (same column order used for training)
+user_row = np.array([[study_hours, class_attendance, sleep_hours, internet_access, sleep_quality, study_method, facility_rating, exam_difficulty, course]])
+# scale the full row with the trained StandardScaler
+user_row_scaled = scaler.transform(user_row)
+# predict
+predicted_score = model.predict(user_row_scaled)
+print(f"The predicted exam score is: {predicted_score[0]:.2f}")

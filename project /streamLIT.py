@@ -6,6 +6,8 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 import streamlit as st
 import warnings
+from pathlib import Path
+
 warnings.filterwarnings("ignore")
 
 # ------------------- Page config -------------------
@@ -17,7 +19,12 @@ st.markdown("![House Image](https://media.istockphoto.com/id/856794670/photo/bea
 # ------------------- Load and prepare data (cached) -------------------
 @st.cache_data
 def load_and_train():
-    df = pd.read_csv("real_estate.csv")
+    ROOT = Path(__file__).resolve().parent
+    csv_path = ROOT / "real_estate.csv"
+    if not csv_path.exists():
+        raise FileNotFoundError(f"{csv_path} not found. Put real_estate.csv next to streamLIT.py")
+    df = pd.read_csv(csv_path)
+
     df_dup = df.copy()
     df_dup.drop(columns=["ID", "Garage_Size", "Location_Score", "Distance_to_Center"], inplace=True, axis=1)
 
